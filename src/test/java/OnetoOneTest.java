@@ -1,13 +1,14 @@
 import java.io.File;
-import java.util.List;
 import org.example.entity.Book;
+import org.example.entity.oneToOne.Person;
+import org.example.entity.oneToOne.SSN;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-public class BookTest {
+public class OnetoOneTest {
 
   private static SessionFactory sessionFactory;
 
@@ -21,17 +22,21 @@ public class BookTest {
     sessionFactory = configuration.buildSessionFactory(); //获取Session
   }
 
-
   @Test
   public void testSave() {
     //3.改对象有crud操作
     Session session = sessionFactory.openSession();
     //4.开启事务
     session.beginTransaction();
-    Book b1 = new Book();
-    b1.setTitle("Java");
-    b1.setAuthor("Tom");
-    session.save(b1);
+    Person person = new Person();
+    SSN ssn = new SSN();
+
+    person.setName("John");
+
+    ssn.setNumber("090342787");
+    ssn.addPerson(person);
+
+    session.save(ssn);
     //5.提交事务
     session.getTransaction().commit();
     //6.关闭session
@@ -39,51 +44,29 @@ public class BookTest {
   }
 
 
-  @Test
-  public void testGet() {
-    //3.改对象有crud操作
-    Session session = sessionFactory.openSession();
-    //4.查询不需要 开启事务， 增删改 需要
-//    session.beginTransaction();
-    var book = session.get(Book.class, 1);
-    System.out.println(book);
-    //5.提交事务
-//    session.getTransaction().commit();
-    //6.关闭session
-    session.close();
-  }
+  /*
+  和简单的 book test 相比
+  这里 必须要 先get ssn ， 才能删除，
+  因为这里有 级联关系了
+   because Hibernate needs to manage the entity within a session before it can perform
+  operations like deletion. The entity must be in a managed state for Hibernate to be able to track
+  changes and relationship mappings properly.
 
-
-  @Test
-  public void testHQLGet() {
-    //3.改对象有crud操作
-    Session session = sessionFactory.openSession();
-    //4.查询不需要 开启事务， 增删改 需要
-//    session.beginTransaction();
-    var arr =  session.createQuery("select b from Book b where b.title = 'Java'", Book.class);
-    System.out.println(arr);
-    //5.提交事务
-//    session.getTransaction().commit();
-    //6.关闭session
-    session.close();
-  }
-
-
-
+   */
   @Test
   public void testDelete() {
     //3.改对象有crud操作
     Session session = sessionFactory.openSession();
     //4.开启事务
     session.beginTransaction();
-    Book b1 = new Book();
-    b1.setId(3);
-    session.delete(b1); //删除是 传 对象进去 不是id
+    SSN ssn = session.get(SSN.class, 2);
+    if(ssn != null){
+      session.delete(ssn);
+    }
     //5.提交事务
     session.getTransaction().commit();
     //6.关闭session
     session.close();
   }
-
 
 }

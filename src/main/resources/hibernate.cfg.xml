@@ -44,6 +44,16 @@
 
     <!-- 2. annotation mapping :  这里直接扫描class annotation -->
     <mapping class="org.example.entity.Book"/>
+    <mapping class="org.example.entity.oneToOne.SSN"/>
+    <mapping class="org.example.entity.oneToOne.Person"/>
+    <mapping class="org.example.entity.oneToMany.School"/>
+    <mapping class="org.example.entity.oneToMany.Student"/>
+
+    <mapping class="org.example.entity.manyToMany.noLinkTable.Course"/>
+    <mapping class="org.example.entity.manyToMany.noLinkTable.Staff"/>
+
+
+
   </session-factory>
 
 
